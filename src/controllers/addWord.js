@@ -34,7 +34,7 @@ const addWord = async (req, res) => {
     ];
 
     const result = await pool.query(querytext, values);
-    return res.status(201).json(result.rows[0]).json({ message: "Word added successfully" });
+    return res.status(201).json(result.rows[0]);
 
     }
     catch (error) {
