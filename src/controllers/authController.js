@@ -34,4 +34,35 @@ const register = async (req, res) => {
     }
 }
 
+// Kullanıcı giriş (Login) işlemlerini yürüten controller fonksiyonu
+const login = async (req, res) =>{
+    // Mobil uygulamadan (istemciden) gelen e-posta ve şifre bilgilerini gövdeden (body) ayıklıyoruz
+    const {email, password} = req.body
+
+    try {
+        //E-posta kontrolü için güvenli, parametrik SQL sorgumuzu hazırlıyoruz
+        const sorgu = "SELECT * FROM users WHERE email = $1"
+        // Mobil uygulamadan (istemciden) gelen e-posta ve şifre bilgilerini gövdeden (body) ayıklıyoruz
+        const sonuclar = await pool.query(sorgu,[email])
+
+        if (sonuclar.rows.length === 0){
+            return res.status(400).json("E-postanizi bos veya hatali girdiniz");
+        }else if ( !await bcrypt.compare(password,sonuclar.rows[0].password)){
+            return res.status(400).json("E-postanizi bos veya hatali girdiniz");
+        }
+        return res.status(200).json({
+            message: "Giriş Yapıldı",
+            kullanici: {
+                id: sonuclar.rows[0].id,
+                username: sonuclar.rows[0].username,
+                email: sonuclar.rows[0].email
+            }
+        });
+    }
+    catch(err) {
+        // Veritabanı kesintisi veya beklenmedik kod hatalarında sunucu çökmesin diye hatayı yakalayıp 500 dönüyoruz
+        return res.status(500).json("Giris Yapilamadi");
+    }
+}
+
 module.exports = {register}
