@@ -54,7 +54,7 @@ const login = async (req, res) =>{
             message: "Giriş Yapıldı",
             kullanici: {
                 id: sonuclar.rows[0].id,
-                username: sonuclar.rows[0].username,
+                adi: sonuclar.rows[0].first_name,
                 email: sonuclar.rows[0].email
             }
         });
@@ -65,4 +65,4 @@ const login = async (req, res) =>{
     }
 }
 
-module.exports = {register}
+module.exports = {register, login}
